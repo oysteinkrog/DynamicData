@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>DynamicData</id>
-    <version>3.3.0</version>
-    <title>Dynamic Data</title>
-    <authors>Roland Pheasant</authors>
-    <copyright>Roland Pheasant</copyright>
-    <projectUrl>http://dynamic-data.org</projectUrl>
-    <owners>Roland Pheasant</owners>
-    <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	  <id>DynamicData</id>
+	  <version>$version$</version>
+	  <title>Dynamic Data</title>
+	  <authors>Roland Pheasant</authors>
+	  <copyright>Roland Pheasant</copyright>
+	  <projectUrl>http://dynamic-data.org</projectUrl>
+	  <owners>Roland Pheasant</owners>
+	  <licenseUrl>http://opensource.org/licenses/MS-PL</licenseUrl>
+	  <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       Bring the power of Rx to collections using Dynamic Data.
       Dynamic Data is a comprehensive caching and data manipulation solution which introduces domain centric observable collections.
