@@ -68,10 +68,12 @@ namespace DynamicData.Operators
                                   .Take(_parameters.Size)
                                   .ToList();
 
-            _current = new KeyValueCollection<TObject, TKey>(virualised, _all.Comparer, SortReason.DataChanged,_all.Optimisations);
 
-            ////check for changes within the current virtualised page.  Notify if there have been changes or if the overall count has changed
-            var notifications = _changedCalculator.Calculate(_current, previous, updates);
+
+			_current = new KeyValueCollection<TObject, TKey>(virualised, _all.Comparer, updates != null ? updates.SortedItems.SortReason : SortReason.DataChanged, _all.Optimisations);
+
+			////check for changes within the current virtualised page.  Notify if there have been changes or if the overall count has changed
+			var notifications = _changedCalculator.Calculate(_current, previous, updates);
             if (notifications.Count == 0 && (previous.Count != _current.Count))
             {
                 return null;

@@ -11,8 +11,15 @@ namespace DynamicData.Operators
         public IList<Change<TObject, TKey>> Calculate(IKeyValueCollection<TObject, TKey> currentItems,
             IKeyValueCollection<TObject, TKey> previousItems,IChangeSet<TObject, TKey> sourceUpdates)
         {
-            {
-                List<KeyValuePair<TKey,TObject>> previousList = previousItems.ToList();
+			if (currentItems.SortReason == SortReason.ComparerChanged)
+			{
+				//clear collection and rebuild
+				var removed = previousItems.Select((item, index) => new Change<TObject, TKey>(ChangeReason.Remove, item.Key, item.Value, index));
+				var newitems = currentItems.Select((item, index) => new Change<TObject, TKey>(ChangeReason.Add, item.Key, item.Value, index));
+
+				return new List<Change<TObject, TKey>>(removed.Union(newitems));
+			}
+			List<KeyValuePair<TKey,TObject>> previousList = previousItems.ToList();
                 var keyComparer =new KeyComparer<TObject, TKey>();
                 
                 var removes = previousItems.Except(currentItems,keyComparer).ToList();
@@ -133,7 +140,7 @@ namespace DynamicData.Operators
                 return result;
             }
              
-        }
+        
 
 
         private int GetInsertPositionLinear(IList<KeyValuePair<TKey,TObject>> list, KeyValuePair<TKey,TObject> item,
