@@ -46,7 +46,7 @@ namespace DynamicData.Operators
 
         public override int GetHashCode()
         {
-            return (SortedItems != null ? SortedItems.GetHashCode() : 0);
+            return SortedItems?.GetHashCode() ?? 0;
         }
 
         #endregion
