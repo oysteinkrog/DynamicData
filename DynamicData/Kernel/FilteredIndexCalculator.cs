@@ -30,7 +30,8 @@ namespace DynamicData.Operators
                 var result = new List<Change<TObject, TKey>>();
                 foreach (var remove in removes)
                 {
-                    var index = previousList.BinarySearch(remove, currentItems.Comparer);
+                    //var index = previousList.BinarySearch(remove, currentItems.Comparer);
+                    var index = previousList.IndexOf(remove);
                     previousList.RemoveAt(index);
                     result.Add(new Change<TObject, TKey>(ChangeReason.Remove, remove.Key, remove.Value, index));
                 }
