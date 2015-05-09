@@ -1,11 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DynamicData.Kernel;
 
 namespace DynamicData.Operators
 {
-    internal sealed class PagedChangeSet<TObject, TKey> : ChangeSet<TObject, TKey>, IPagedChangeSet<TObject, TKey>
+    internal sealed class PagedChangeSet<TObject, TKey> : ChangeSet<TObject, TKey>, IPagedChangeSet<TObject, TKey>, IEquatable<PagedChangeSet<TObject, TKey>>
     {
+        public static bool operator ==(PagedChangeSet<TObject, TKey> left, PagedChangeSet<TObject, TKey> right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PagedChangeSet<TObject, TKey> left, PagedChangeSet<TObject, TKey> right)
+        {
+            return !Equals(left, right);
+        }
+
         private readonly IKeyValueCollection<TObject, TKey> _sortedItems;
         private readonly IPageResponse _response;
 
@@ -29,24 +40,23 @@ namespace DynamicData.Operators
 
         #region Equality Members
 
-        protected bool Equals(PagedChangeSet<TObject, TKey> other)
+        public bool Equals(PagedChangeSet<TObject, TKey> other)
         {
-            return SortedItems.SequenceEqual(other.SortedItems);
-            // return Equals(this.SortedItems, other.SortedItems);
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(_sortedItems, other._sortedItems);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-
-            return Equals((PagedChangeSet<TObject, TKey>)obj);
+            return obj is PagedChangeSet<TObject, TKey> && Equals((PagedChangeSet<TObject, TKey>) obj);
         }
 
         public override int GetHashCode()
         {
-            return SortedItems?.GetHashCode() ?? 0;
+            return (_sortedItems != null ? _sortedItems.GetHashCode() : 0);
         }
 
         #endregion
