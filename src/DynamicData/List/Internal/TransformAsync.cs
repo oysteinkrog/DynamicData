@@ -12,8 +12,9 @@ internal class TransformAsync<TSource, TDestination>
     private readonly Func<TSource, Task<TransformedItemContainer>> _containerFactory;
 
     private readonly IObservable<IChangeSet<TSource>> _source;
+    private bool _transformOnRefresh;
 
-    public TransformAsync(IObservable<IChangeSet<TSource>> source, Func<TSource, Task<TDestination>> factory)
+    public TransformAsync(IObservable<IChangeSet<TSource>> source, Func<TSource, Task<TDestination>> factory, bool transformOnRefresh)
     {
         if (factory is null)
         {
@@ -21,6 +22,7 @@ internal class TransformAsync<TSource, TDestination>
         }
 
         _source = source ?? throw new ArgumentNullException(nameof(source));
+        _transformOnRefresh = transformOnRefresh;
         _containerFactory = async item =>
         {
             var destination = await factory(item).ConfigureAwait(false);
@@ -91,6 +93,21 @@ internal class TransformAsync<TSource, TDestination>
                         var tasks = item.Range.Select(_containerFactory);
                         var containers = await Task.WhenAll(tasks).ConfigureAwait(false);
                         transformed.AddOrInsertRange(containers, item.Range.Index);
+                        break;
+                    }
+
+                case ListChangeReason.Refresh:
+                    {
+                        if (_transformOnRefresh)
+                        {
+                            var container = await _containerFactory(item.Item.Current).ConfigureAwait(false);
+                            transformed[item.Item.CurrentIndex] = container;
+                        }
+                        else
+                        {
+                            transformed.RefreshAt(item.Item.CurrentIndex);
+                        }
+
                         break;
                     }
 

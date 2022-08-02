@@ -1909,13 +1909,16 @@ public static class ObservableListEx
     /// <typeparam name="TDestination">The type of the destination.</typeparam>
     /// <param name="source">The source.</param>
     /// <param name="transformFactory">The transform factory.</param>
+    /// <param name="transformOnRefresh"></param>
     /// <returns>A an observable change set of the transformed object.</returns>
     /// <exception cref="System.ArgumentNullException">
     /// source
     /// or
     /// valueSelector.
     /// </exception>
-    public static IObservable<IChangeSet<TDestination>> TransformAsync<TSource, TDestination>(this IObservable<IChangeSet<TSource>> source, Func<TSource, Task<TDestination>> transformFactory)
+    public static IObservable<IChangeSet<TDestination>> TransformAsync<TSource, TDestination>(
+        this IObservable<IChangeSet<TSource>> source, Func<TSource, Task<TDestination>> transformFactory,
+        bool transformOnRefresh = false)
     {
         if (source is null)
         {
@@ -1927,7 +1930,7 @@ public static class ObservableListEx
             throw new ArgumentNullException(nameof(transformFactory));
         }
 
-        return new TransformAsync<TSource, TDestination>(source, transformFactory).Run();
+        return new TransformAsync<TSource, TDestination>(source, transformFactory, transformOnRefresh).Run();
     }
 
     /// <summary>
