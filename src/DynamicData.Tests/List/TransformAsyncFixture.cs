@@ -129,8 +129,9 @@ public class TransformAsyncFixture : IDisposable
     /// This test is disabled as it was flaky.
     /// https://github.com/reactivemarbles/DynamicData/pull/625
     /// </summary>
-    [Fact]
-    private void TransformOnRefresh()
+    [Theory]
+    [Repeat(1000000)]
+    public void TransformOnRefresh(int i)
     {
         var items = Enumerable.Range(1, 100).Select(i => new Person("Person" + i, 1)).ToArray();
 
@@ -164,5 +165,29 @@ public class TransformAsyncFixture : IDisposable
         results.Messages.Count.Should().Be(5);
 
         results.Messages.Last().First().Reason.Should().Be(ListChangeReason.Replace);
+    }
+    public sealed class RepeatAttribute : Xunit.Sdk.DataAttribute
+    {
+        private readonly int count;
+
+        public RepeatAttribute(int count)
+        {
+            if (count < 1)
+            {
+                throw new System.ArgumentOutOfRangeException(
+                    paramName: nameof(count),
+                    message: "Repeat count must be greater than 0."
+                );
+            }
+            this.count = count;
+        }
+
+        public override System.Collections.Generic.IEnumerable<object[]> GetData(System.Reflection.MethodInfo testMethod)
+        {
+            foreach (var iterationNumber in Enumerable.Range(start: 1, count: this.count))
+            {
+                yield return new object[] { iterationNumber };
+            }
+        }
     }
 }
